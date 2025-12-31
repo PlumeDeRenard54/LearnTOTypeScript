@@ -1,3 +1,6 @@
+/**
+ * Représente la plateau de jeu
+ */
 export class Plateau {
     grille;
     constructor(x, y) {

@@ -3,9 +3,15 @@ import {Plateau} from "./Plateau.js";
 import {Tile} from "./Tile.js";
 import {Player} from "./Player.js";
 
+/**
+ * Classe représentant le backend du jeu
+ */
 export class Jeu {
+    // Dictionnaire utilisé
     dico : Dictionnaire = Dictionnaire.getDictionnaire();
+    // Plateau contenant les tiles
     plateau : Plateau;
+    //Joueur local
     joueur : Player;
 
 
@@ -13,11 +19,13 @@ export class Jeu {
         this.joueur = new Player(playerName);
     }
 
+    //Methode pour placer un nouveau jeton sur la grille
     public placerJeton(x : number,y:number , jeton : Tile) : void{
         jeton.isNew = true;
         this.plateau.grille[x][y] = jeton;
     }
 
+    //Checke si le jeu est valide et renvoie le score de l'action
     public validerJeu():number{
         if (this.checkHorizontal() && this.checkVertical()){
             return this.calulerScore();
@@ -26,6 +34,7 @@ export class Jeu {
         }
     }
 
+    //Calcule le score de l'action et note les nouvelles tiles comme déjà jouées
     private calulerScore():number {
         let score = 0;
         for (let ligne of this.plateau.grille ){
@@ -40,6 +49,7 @@ export class Jeu {
         return score;
     }
 
+    //Verifie que les mots verticaux sont valides
     public checkVertical(): boolean{
         let grille : Array<Array<Tile>> = this.plateau.grille;
         for (let ligne of grille){
@@ -61,6 +71,7 @@ export class Jeu {
         return true;
     }
 
+    //Check si les mots horizontaux sont valides
     public checkHorizontal() : boolean{
         let grille : Array<Array<Tile>> = this.plateau.grille;
         for (let i = 0 ; i<grille[0].length ; i++){

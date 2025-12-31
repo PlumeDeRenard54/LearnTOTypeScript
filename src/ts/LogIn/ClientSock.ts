@@ -3,6 +3,7 @@ import { io, Socket } from "socket.io-client";
 import {Jeu} from "../Game/Jeu.js";
 import {Plateau} from "../Game/Plateau.js";
 
+//Fonction Server -> Client
 interface ServerToClientEvents {
 
     permissionDeJeu : () => void;
@@ -10,16 +11,21 @@ interface ServerToClientEvents {
     launchGame : (opponent : string, plateau : Plateau) => void;
 }
 
+//Fonction Client -> Server
 interface ClientToServerEvents {
     setName: (name:string) => void;
     Play : (plateau : Plateau, scoreCoup : number) => void;
 }
 
+//Partie client du server
 export class ClientSock {
 
+    //Instance du client
     private static instance : ClientSock
 
+    //Socket reliant le client au server
     private socket : Socket<ServerToClientEvents, ClientToServerEvents>;
+    //Jeu géré par le client
     private static jeu : Jeu;
 
 

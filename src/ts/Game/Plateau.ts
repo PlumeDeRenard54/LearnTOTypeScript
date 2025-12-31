@@ -1,6 +1,8 @@
 import {Tile} from './Tile.js' ;
 
-
+/**
+ * Représente la plateau de jeu
+ */
 export class Plateau{
     grille : Array<Array<Tile>>
 

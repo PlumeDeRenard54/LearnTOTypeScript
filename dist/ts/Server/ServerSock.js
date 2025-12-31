@@ -1,10 +1,17 @@
 import { Server } from "socket.io";
 import { createServer } from "node:http";
 import { Plateau } from "../Game/Plateau.js";
+/**
+ * Classe server
+ */
 export class ServerSock {
+    //Instance server
     static instance;
+    //Server Socket.io
     io;
+    //Server http
     server;
+    //Games supportées par le server
     jeux;
     constructor() {
         this.server = createServer();

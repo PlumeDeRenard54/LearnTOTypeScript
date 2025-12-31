@@ -2,6 +2,9 @@ import {Namespace, Server,Socket} from "socket.io";
 import {createServer,Server as httpServer} from "node:http";
 import {Plateau} from "../Game/Plateau.js";
 
+/**
+ * Fonctions Server -> Client
+ */
 interface ServerToClientEvents {
 
     permissionDeJeu : () => void;
@@ -9,38 +12,59 @@ interface ServerToClientEvents {
     launchGame : (opponent : string, plateau : Plateau) => void;
 }
 
+/**
+ * Fonctions Client -> Server
+ */
 interface ClientToServerEvents {
     setName: (name:string) => void;
     Play : (plateau : Plateau, scoreCoup : number) => void;
 }
 
+/**
+ * Inutile (Server -> Server)
+ */
 interface InterServerEvents {
     ping: () => void;
 }
 
+/**
+ * Données stockées avec les sockets client
+ */
 interface SocketData {
     name: string;
 }
 
+/**
+ * Type joueur server
+ */
 type joueur = {
     nom : string
     score : number
     socket : Socket
 }
 
+/**
+ * Type jeu server
+ */
 type game = {
     plateau : Plateau
     j1 : joueur
     j2 : joueur
     currentPlayer : joueur
-
 }
 
+/**
+ * Classe server
+ */
 export class ServerSock {
+    //Instance server
     private static instance: ServerSock
 
+    //Server Socket.io
     private io: Server
+    //Server http
     private server : httpServer;
+    //Games supportées par le server
     private jeux : Array<game>
 
 

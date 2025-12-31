@@ -1,3 +1,4 @@
+// Fichier a executer une fois pour nettoyer la bd du fichier Words.csv
 import * as fs from 'fs';
 let contenu;
 let lignes;

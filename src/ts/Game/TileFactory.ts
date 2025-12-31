@@ -1,5 +1,9 @@
 import {Tile} from "./Tile.js";
 
+/**
+ * Factory de tiles,
+ * créé des tuiles aléatoirement
+ */
 export class TileFactory{
 
     private static letters : Array<Tile>

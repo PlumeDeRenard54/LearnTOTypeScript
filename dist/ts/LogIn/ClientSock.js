@@ -1,7 +1,11 @@
 import { io } from "socket.io-client";
+//Partie client du server
 export class ClientSock {
+    //Instance du client
     static instance;
+    //Socket reliant le client au server
     socket;
+    //Jeu géré par le client
     static jeu;
     constructor() {
         this.socket = io("http://localhost:8080");
