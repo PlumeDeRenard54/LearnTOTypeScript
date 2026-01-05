@@ -1,11 +1,14 @@
 
-import { io, Socket } from "socket.io-client";
+// @ts-ignore
+import { io, Socket } from "https://cdn.socket.io/4.8.3/socket.io.esm.min.js";
 import {Jeu} from "../Game/Jeu.js";
 import {Plateau} from "../Game/Plateau.js";
+import {gamePage} from "../MainCode.js";
 
 //Fonction Server -> Client
 interface ServerToClientEvents {
 
+    askToConnect : (room : string)=>void;
     permissionDeJeu : () => void;
     sendWelcomeText : (message : string) => void;
     launchGame : (opponent : string, plateau : Plateau) => void;
@@ -33,25 +36,29 @@ export class ClientSock {
 
         this.socket = io("http://localhost:8080");
 
-        let sock = this.socket;
+        this.socket.on("askToConnect",(room : string)=>{
+            console.log("Connexion à la room " + room);
+            this.socket = io("http://localhost:8080"+room);
 
-        sock.connect();
+            this.socket.on("launchGame",(opponent : string, plateau : Plateau)=>{
+                console.log("Lancement du jeu")
+                console.log("Your opponent is " + opponent);
+                ClientSock.jeu.plateau = plateau;
+                ClientSock.jeu.joueur.fillDeck();
+                gamePage();
+            })
 
-        sock.on("launchGame",(opponent : string, plateau : Plateau)=>{
-            console.log("Your opponent is " + opponent);
-            ClientSock.jeu.plateau = plateau;
-        })
+            this.socket.on("permissionDeJeu",() => {
+                console.log("Reception de la permission de jeu")
+                ClientSock.jeu.joueur.isAllowed = true;
+            });
 
-        sock.emit("setName",ClientSock.jeu.joueur.name);
+            this.socket.on("sendWelcomeText",(message : string) => {
+                console.log(message);
+            })
 
-        sock.on("permissionDeJeu",() => {
-            ClientSock.jeu.joueur.isAllowed = true;
+            this.socket.emit("setName",ClientSock.jeu.joueur.name);
         });
-
-        sock.on("sendWelcomeText",(message : string) => {
-            console.log(message);
-        })
-
     }
 
     public static getInstance():ClientSock{

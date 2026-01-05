@@ -1,0 +1,39 @@
+.grille{
+    display: grid;
+
+    border : black;
+    border-radius: 15px;
+    align-content: center;
+    max-width: 40%;
+    margin: auto;
+}
+
+body{
+    text-align: center;
+    background-color: blueviolet;
+    align-content: center ;
+    margin: auto;
+}
+
+vue-tile{
+    margin: 5px;
+    border-radius: 15px;
+    border-style: solid;
+    aspect-ratio: 1/1;
+    align-content: center;
+    text-align: center;
+    background-color: lemonchiffon;
+}
+
+.connectButton{
+    background-color: #c11313;
+    height: auto;
+    width: auto;
+    border-style: double;
+    border-radius: 5px;
+}
+
+.nameInput{
+
+}
+

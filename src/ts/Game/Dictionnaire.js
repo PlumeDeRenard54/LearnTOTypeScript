@@ -1,21 +1,41 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Dictionnaire = void 0;
-var fs = require("fs");
-var Dictionnaire = /** @class */ (function () {
-    function Dictionnaire() {
-        var contenu = fs.readFileSync("../data/dataDictionnaire").toString();
-        this.dictionnaire = contenu.split("\n");
+/**
+ * Dictionnaire contenant la liste entiere des mots utilisables
+ */
+export class Dictionnaire {
+    /**
+     * instance du dictionnaire
+     * @private
+     */
+    static singleton;
+    /**
+     * dictionnaire
+     */
+    dictionnaire;
+    constructor() {
+        this.dictionnaire = new Array();
+        this.loadDictionary();
     }
-    Dictionnaire.getDictionnaire = function () {
+    async loadDictionary() {
+        const response = await fetch('../data/dataDictionnaire'); // Path relative to your HTML
+        const csvData = await response.text();
+        this.dictionnaire = csvData.split("\n");
+        // Now you can parse your CSV string
+    }
+    /**
+     * Methode de recuperation du dico
+     */
+    static getDictionnaire() {
         if (this.singleton == null) {
             this.singleton = new Dictionnaire();
         }
         return this.singleton;
-    };
-    Dictionnaire.prototype.contains = function (s) {
+    }
+    /**
+     * recherche de mot
+     * @param s
+     */
+    contains(s) {
         return (this.dictionnaire.indexOf(s) != -1);
-    };
-    return Dictionnaire;
-}());
-exports.Dictionnaire = Dictionnaire;
+    }
+}
+//# sourceMappingURL=Dictionnaire.js.map

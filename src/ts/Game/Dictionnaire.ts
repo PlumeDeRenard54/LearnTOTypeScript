@@ -1,5 +1,3 @@
-import * as fs from 'fs';
-
 /**
  * Dictionnaire contenant la liste entiere des mots utilisables
  */
@@ -17,8 +15,15 @@ export class Dictionnaire{
     dictionnaire : Array<string>;
 
     private constructor() {
-        let contenu : string = fs.readFileSync("../data/dataDictionnaire").toString();
-        this.dictionnaire = contenu.split("\n");
+        this.dictionnaire = new Array<string>();
+        this.loadDictionary();
+    }
+
+    private async loadDictionary() {
+        const response = await fetch('../data/dataDictionnaire'); // Path relative to your HTML
+        const csvData = await response.text();
+        this.dictionnaire = csvData.split("\n");
+        // Now you can parse your CSV string
     }
 
     /**

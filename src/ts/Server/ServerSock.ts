@@ -7,9 +7,11 @@ import {Plateau} from "../Game/Plateau.js";
  */
 interface ServerToClientEvents {
 
+    askToConnect : (room : string)=>void;
     permissionDeJeu : () => void;
     sendWelcomeText : (message : string) => void;
     launchGame : (opponent : string, plateau : Plateau) => void;
+
 }
 
 /**
@@ -48,9 +50,9 @@ type joueur = {
  */
 type game = {
     plateau : Plateau
-    j1 : joueur
-    j2 : joueur
-    currentPlayer : joueur
+    j1 : joueur |null
+    j2 : joueur | null
+    currentPlayer : joueur | null
 }
 
 /**
@@ -69,6 +71,7 @@ export class ServerSock {
 
 
     private constructor() {
+        this.jeux = new Array<game>()
         this.server = createServer();
         this.io = new Server<
             ClientToServerEvents,
@@ -84,24 +87,19 @@ export class ServerSock {
 
         this.io.on("connection", (socket) => {
 
-            socket.on("setName", (name:string) => {
-                socket.data.name = name;
-                console.log("Nom : " + name);
+            //Recuperer un namespace libre
+            let i : number = 0;
+            let nameSpace: Namespace;
+            do {
+                let roomName : string = "/room"+i;
+                if (!this.io._nsps.has(roomName)){
+                    this.setUpRoom(this.io.of(roomName),i)
+                    console.log("Ouverture de la room : " + roomName);
+                }
+                nameSpace = this.io.of(roomName)
+            }while (nameSpace.sockets.size > 1 )
 
-                //Recuperer un namespace libre
-                let i : number = 0;
-                let nameSpace: Namespace;
-                do {
-                    let roomName : string = "/room"+i;
-                    if (!this.io._nsps.has(roomName)){
-                        this.setUpRoom(this.io.of(roomName),i)
-                    }
-                    nameSpace = this.io.of(roomName)
-                    console.log(nameSpace.name);
-                }while (nameSpace.sockets.size > 1 )
-
-                socket.join(nameSpace.name)
-            });
+            socket.emit("askToConnect",nameSpace.name)
         });
 
         this.server.listen(8080, () => {
@@ -111,6 +109,7 @@ export class ServerSock {
 
     //Setting up des rooms de jeu
     private setUpRoom(nameSpace : Namespace,index : number){
+
 
         this.jeux[index]={
             plateau : new Plateau(10,10),
@@ -122,32 +121,43 @@ export class ServerSock {
         nameSpace.on("Play",(plateau : Plateau , scoreCoup : number)=>{
             let jeu = this.jeux[index];
             jeu.plateau = plateau;
+            // @ts-ignore
             jeu.currentPlayer.score += scoreCoup;
             if (jeu.currentPlayer == jeu.j1){
                 jeu.currentPlayer = jeu.j2;
             }else {
                 jeu.currentPlayer = jeu.j1
             }
+            // @ts-ignore
             jeu.currentPlayer.socket.emit("permissionDeJeu")
         });
 
         nameSpace.on("connection",(socket) =>{
-            let jeu = this.jeux[index];
-            if ( jeu.j1 == null ){
-                jeu.j1 = {nom: socket.data.name, score: 0, socket: socket}
-                socket.emit("sendWelcomeText","Welcome to room " + index + " please wait for an opponent")
-            }else {
-                jeu.j2 = {nom: socket.data.name, score: 0, socket: socket}
-                socket.emit("sendWelcomeText","We were waiting for you, let's start")
-                jeu.currentPlayer = jeu.j1;
 
-                //Lancement de la partie
-                jeu.j1.socket.emit("launchGame",jeu.j2.nom,jeu.plateau);
-                jeu.j2.socket.emit("launchGame",jeu.j1.nom,jeu.plateau);
+            socket.on("setName", (name:string) => {
+                socket.data.name = name;
+                console.log("Nom : " + name);
 
-                //Permission de jouer
-                jeu.currentPlayer.socket.emit("permissionDeJeu");
-            }
+                console.log("Remplissage de la room" + index);
+                console.log(nameSpace.sockets.size + " personnes connectées");
+
+                let jeu = this.jeux[index];
+                if (jeu.j1 == null) {
+                    jeu.j1 = {nom: socket.data.name, score: 0, socket: socket}
+                    socket.emit("sendWelcomeText", "Welcome to room " + index + " please wait for an opponent")
+                } else {
+                    jeu.j2 = {nom: socket.data.name, score: 0, socket: socket}
+                    socket.emit("sendWelcomeText", "We were waiting for you, let's start")
+                    jeu.currentPlayer = jeu.j1;
+
+                    //Lancement de la partie
+                    jeu.j1.socket.emit("launchGame", jeu.j2.nom, jeu.plateau);
+                    jeu.j2.socket.emit("launchGame", jeu.j1.nom, jeu.plateau);
+
+                    //Permission de jouer
+                    jeu.currentPlayer.socket.emit("permissionDeJeu");
+                }
+            });
         })
 
     }
@@ -167,3 +177,5 @@ export class ServerSock {
         return this.getUsers().length;
     }
 }
+
+ServerSock.getInstance();

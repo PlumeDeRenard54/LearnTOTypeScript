@@ -1,24 +1,29 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Player = void 0;
-var TileFactory_1 = require("./TileFactory");
-var Player = /** @class */ (function () {
-    function Player(name) {
+import { TileFactory } from "./TileFactory.js";
+/**
+ * Représente un joueur
+ */
+export class Player {
+    //Nombre max de tuiles que l'utilisateur peut avoir dans son deck
+    static decksize = 8;
+    name;
+    deck;
+    isAllowed;
+    constructor(name) {
         this.name = name;
         this.deck = new Array();
         this.isAllowed = false;
     }
-    Player.prototype.add2Deck = function (nb) {
-        for (var i = 0; i < nb; i++) {
-            this.deck.push(TileFactory_1.TileFactory.createTile());
+    //Ajoute un nombre de tuiles au deck du joueur
+    add2Deck(nb) {
+        for (let i = 0; i < nb && this.deck.length <= Player.decksize; i++) {
+            this.deck.push(TileFactory.createTile());
         }
-    };
-    Player.prototype.fillDeck = function () {
+    }
+    //remplis entierement le deck du joueur
+    fillDeck() {
         while (this.deck.length < Player.decksize) {
-            this.deck.push(TileFactory_1.TileFactory.createTile());
+            this.deck.push(TileFactory.createTile());
         }
-    };
-    Player.decksize = 8;
-    return Player;
-}());
-exports.Player = Player;
+    }
+}
+//# sourceMappingURL=Player.js.map

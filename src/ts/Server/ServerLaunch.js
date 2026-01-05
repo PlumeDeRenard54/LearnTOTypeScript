@@ -1,4 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var ServerSock_1 = require("./ServerSock");
-var server = ServerSock_1.ServerSock.getInstance();
+//Lancement du server (Un peu inutile)
+import { ServerSock } from "./ServerSock.js";
+let server = ServerSock.getInstance();
+//# sourceMappingURL=ServerLaunch.js.map

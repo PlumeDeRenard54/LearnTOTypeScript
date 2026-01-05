@@ -1,11 +1,16 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Tile = void 0;
-var Tile = /** @class */ (function () {
-    function Tile(lettre, score) {
+/**
+ * Objet Tile
+ */
+export class Tile {
+    //Lettre de la tuile
+    lettre;
+    //Nombre de points donnés lors du scoring
+    score;
+    //Si la tuile viens d'être placée ou pas
+    isNew;
+    constructor(lettre, score) {
         this.lettre = lettre;
         this.score = score;
     }
-    return Tile;
-}());
-exports.Tile = Tile;
+}
+//# sourceMappingURL=Tile.js.map

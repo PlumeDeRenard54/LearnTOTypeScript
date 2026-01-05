@@ -17,6 +17,7 @@ export class Jeu {
 
     public constructor(playerName : string ) {
         this.joueur = new Player(playerName);
+        this.plateau = new Plateau(10,10);
     }
 
     //Methode pour placer un nouveau jeton sur la grille

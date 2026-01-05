@@ -1,11 +1,10 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "esModuleInterop": true,
-    "skipLibCheck": true
+    "target": "ESNext",         /* Modern browsers support ESNext */
+    "module": "ESNext",         /* Allows 'import' and 'export' in the browser */
+    "moduleResolution": "node", /* Helps find socket.io and other packages */
+    "lib": ["ESNext", "DOM"],   /* Allows use of 'document' and 'window' */
+    "sourceMap": true,          /* Highly recommended for debugging in the browser */
+    "strict": true
   }
 }

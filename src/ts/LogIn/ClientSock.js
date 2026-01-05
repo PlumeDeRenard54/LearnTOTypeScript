@@ -1,33 +1,44 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ClientSock = void 0;
-var socket_io_client_1 = require("socket.io-client");
-var ClientSock = /** @class */ (function () {
-    function ClientSock() {
-        this.socket = (0, socket_io_client_1.io)("http://localhost:8080");
-        var sock = this.socket;
-        sock.connect();
-        sock.on("launchGame", function (opponent, plateau) {
-            console.log("Your opponent is " + opponent);
-            ClientSock.jeu.plateau = plateau;
-        });
-        sock.emit("setName", ClientSock.jeu.joueur.name);
-        sock.on("permissionDeJeu", function () {
-            ClientSock.jeu.joueur.isAllowed = true;
-        });
-        sock.on("sendWelcomeText", function (message) {
-            console.log(message);
+// @ts-ignore
+import { io } from "https://cdn.socket.io/4.8.3/socket.io.esm.min.js";
+import { gamePage } from "../MainCode.js";
+//Partie client du server
+export class ClientSock {
+    //Instance du client
+    static instance;
+    //Socket reliant le client au server
+    socket;
+    //Jeu géré par le client
+    static jeu;
+    constructor() {
+        this.socket = io("http://localhost:8080");
+        this.socket.on("askToConnect", (room) => {
+            console.log("Connexion à la room " + room);
+            this.socket = io("http://localhost:8080" + room);
+            this.socket.on("launchGame", (opponent, plateau) => {
+                console.log("Lancement du jeu");
+                console.log("Your opponent is " + opponent);
+                ClientSock.jeu.plateau = plateau;
+                ClientSock.jeu.joueur.fillDeck();
+                gamePage();
+            });
+            this.socket.on("permissionDeJeu", () => {
+                console.log("Reception de la permission de jeu");
+                ClientSock.jeu.joueur.isAllowed = true;
+            });
+            this.socket.on("sendWelcomeText", (message) => {
+                console.log(message);
+            });
+            this.socket.emit("setName", ClientSock.jeu.joueur.name);
         });
     }
-    ClientSock.getInstance = function () {
+    static getInstance() {
         if (this.instance == null) {
             this.instance = new ClientSock();
         }
         return this.instance;
-    };
-    ClientSock.setJeu = function (jeu) {
+    }
+    static setJeu(jeu) {
         this.jeu = jeu;
-    };
-    return ClientSock;
-}());
-exports.ClientSock = ClientSock;
+    }
+}
+//# sourceMappingURL=ClientSock.js.map
