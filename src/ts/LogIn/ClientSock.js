@@ -24,6 +24,7 @@ export class ClientSock {
             this.socket.on("permissionDeJeu", () => {
                 console.log("Reception de la permission de jeu");
                 ClientSock.jeu.joueur.isAllowed = true;
+                gamePage();
             });
             this.socket.on("sendWelcomeText", (message) => {
                 console.log(message);
@@ -39,6 +40,14 @@ export class ClientSock {
     }
     static setJeu(jeu) {
         this.jeu = jeu;
+    }
+    async play() {
+        let play = ClientSock.jeu.validerJeu();
+        if (play != -1) {
+            console.log("A joué !");
+            this.socket.emit("Play", ClientSock.jeu.plateau, play);
+            gamePage();
+        }
     }
 }
 //# sourceMappingURL=ClientSock.js.map

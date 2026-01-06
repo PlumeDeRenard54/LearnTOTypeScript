@@ -39,17 +39,40 @@ export function gamePage() {
     let grille = document.createElement("div");
     grille.className = "grille";
     grille.style.gridTemplateColumns = "repeat(" + jeu.plateau.grille.length + ",1fr)";
-    for (let ligne of jeu.plateau.grille) {
-        for (let cases of ligne) {
-            grille.appendChild(new VueTile(cases));
+    for (let i = 0; i < jeu.plateau.grille.length; i++) {
+        for (let j = 0; j < jeu.plateau.grille[0].length; j++) {
+            let vue = new VueTile(jeu.plateau.grille[i][j], i, j, jeu);
+            grille.appendChild(vue);
+            if (!jeu.joueur.isAllowed) {
+                vue.style.backgroundColor = "grey";
+                vue.draggable = false;
+            }
         }
     }
     //Deck
     let deck = document.createElement("div");
     deck.className = "deck";
+    deck.style.gridTemplateColumns = "repeat(" + jeu.joueur.deck.length + ",1fr)";
     for (let tile of jeu.joueur.deck) {
-        deck.appendChild(new VueTile(tile));
+        let vue = new VueTile(tile, -1, -1, jeu);
+        deck.appendChild(vue);
+        if (!jeu.joueur.isAllowed) {
+            vue.style.backgroundColor = "grey";
+            vue.draggable = false;
+        }
     }
+    //Bonton de validafion
+    let validation = document.createElement("Button");
+    validation.textContent = "Validation";
+    if (jeu.joueur.isAllowed) {
+        validation.onclick = (e) => {
+            ClientSock.getInstance().play();
+        };
+    }
+    else {
+        validation.style.backgroundColor = "grey";
+    }
+    deck.appendChild(validation);
     document.body.appendChild(nom);
     document.body.appendChild(grille);
     document.body.appendChild(deck);

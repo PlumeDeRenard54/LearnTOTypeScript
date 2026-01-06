@@ -29,7 +29,10 @@ export class Jeu {
     //Checke si le jeu est valide et renvoie le score de l'action
     public validerJeu():number{
         if (this.checkHorizontal() && this.checkVertical()){
-            return this.calulerScore();
+            let score : number = this.calulerScore()
+            console.log("score du coup : " + score);
+            this.joueur.isAllowed = false;
+            return score;
         }else{
             return -1;
         }
@@ -40,7 +43,7 @@ export class Jeu {
         let score = 0;
         for (let ligne of this.plateau.grille ){
             for (let caseo of ligne){
-                if (caseo.isNew){
+                if (caseo != null && caseo.isNew ){
                     score += caseo.score;
                     caseo.isNew = false;
                 }
@@ -52,21 +55,30 @@ export class Jeu {
 
     //Verifie que les mots verticaux sont valides
     public checkVertical(): boolean{
+        let inMot = false;
         let grille : Array<Array<Tile>> = this.plateau.grille;
+        let mots : Array<string> = new Array<string>();
+        let nbMot : number = -1;
+
         for (let ligne of grille){
-            let mots : Array<string> = new Array<string>();
-            let nbMot : number = 1;
             for (let tile of ligne){
-                if (tile == null){
-                    nbMot++;
-                }else{
+                if (tile != null){
+                    if (inMot){
+                        nbMot++;
+                        mots[nbMot] = "";
+                        inMot = true;
+
+                    }
                     mots[nbMot] += tile.lettre;
+                }else{
+                    inMot = false;
                 }
             }
-            for (let mot of mots) {
-                if (mot.length > 1 && !this.dico.contains(mot)) {
-                    return false;
-                }
+        }
+        for (let mot of mots) {
+            console.log("verif vertical" + mots);
+            if (mot.length > 1 && !this.dico.contains(mot)) {
+                return false;
             }
         }
         return true;
@@ -74,21 +86,30 @@ export class Jeu {
 
     //Check si les mots horizontaux sont valides
     public checkHorizontal() : boolean{
+        let inMot : boolean = false;
         let grille : Array<Array<Tile>> = this.plateau.grille;
+        let mots : Array<string> = new Array<string>();
+        let nbMot : number = -1;
+
         for (let i = 0 ; i<grille[0].length ; i++){
-            let mots : Array<string> = new Array<string>();
-            let nbMot : number = 1;
             for (let j = 0 ; j<grille.length ; j++){
-                if (grille[j][i] == null){
-                    nbMot++;
-                }else{
+                if (grille[j][i] != null){
+                    if (!inMot){
+                        nbMot++;
+                        mots[nbMot] = "";
+                        inMot = true;
+                    }
                     mots[nbMot] += grille[j][i].lettre;
+                }else{
+                    inMot = false;
                 }
             }
-            for (let mot of mots) {
-                if (mot.length > 1 && !this.dico.contains(mot)) {
-                    return false;
-                }
+            inMot = false;
+            console.log("verif horizontal " + mots);
+        }
+        for (let mot of mots) {
+            if (mot.length > 1 && !this.dico.contains(mot)) {
+                return false;
             }
         }
         return true;

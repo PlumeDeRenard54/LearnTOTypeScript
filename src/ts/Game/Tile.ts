@@ -7,7 +7,7 @@ export class Tile {
     //Nombre de points donnés lors du scoring
     score : number
     //Si la tuile viens d'être placée ou pas
-    isNew : boolean
+    isNew : boolean = true;
 
     constructor(lettre : string , score : number) {
             this.lettre = lettre;

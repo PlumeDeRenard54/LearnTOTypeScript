@@ -1,6 +1,5 @@
-.grille{
+.grille,.deck{
     display: grid;
-
     border : black;
     border-radius: 15px;
     align-content: center;

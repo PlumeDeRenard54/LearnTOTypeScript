@@ -118,20 +118,6 @@ export class ServerSock {
             currentPlayer : null
         };
 
-        nameSpace.on("Play",(plateau : Plateau , scoreCoup : number)=>{
-            let jeu = this.jeux[index];
-            jeu.plateau = plateau;
-            // @ts-ignore
-            jeu.currentPlayer.score += scoreCoup;
-            if (jeu.currentPlayer == jeu.j1){
-                jeu.currentPlayer = jeu.j2;
-            }else {
-                jeu.currentPlayer = jeu.j1
-            }
-            // @ts-ignore
-            jeu.currentPlayer.socket.emit("permissionDeJeu")
-        });
-
         nameSpace.on("connection",(socket) =>{
 
             socket.on("setName", (name:string) => {
@@ -157,6 +143,21 @@ export class ServerSock {
                     //Permission de jouer
                     jeu.currentPlayer.socket.emit("permissionDeJeu");
                 }
+            });
+
+            nameSpace.on("Play",(plateau : Plateau , scoreCoup : number)=>{
+                console.log(this.jeux[index].currentPlayer?.nom + " a joué!")
+                let jeu = this.jeux[index];
+                jeu.plateau = plateau;
+                // @ts-ignore
+                jeu.currentPlayer.score += scoreCoup;
+                if (jeu.currentPlayer == jeu.j1){
+                    jeu.currentPlayer = jeu.j2;
+                }else {
+                    jeu.currentPlayer = jeu.j1
+                }
+                // @ts-ignore
+                jeu.currentPlayer.socket.emit("permissionDeJeu")
             });
         })
 

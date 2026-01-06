@@ -1,16 +1,67 @@
 import {Tile} from "../Game/Tile.js";
+import {Jeu} from "../Game/Jeu.js";
 
 export class VueTile extends HTMLElement{
     tile : Tile|null;
+    x : number;
+    y : number;
 
-    public constructor(tilet :Tile) {
+    public constructor(tilet :Tile,x : number,y: number,jeu : Jeu) {
         super();
+        this.x = x;
+        this.y = y;
+        this.draggable = true;
         if (tilet == null){
             this.textContent = '';
         }else {
             this.textContent = tilet.lettre;
+            if (!tilet.isNew){
+                this.style.backgroundColor = "brown";
+                this.draggable = false;
+            }
         }
         this.tile = tilet;
+
+        this.ondragstart = (e)=>{
+            if (this.tile!=null) {
+                e.dataTransfer!.setData("text/plain", JSON.stringify(this.tile));
+            }
+        };
+
+        this.ondrop = (e)=>{
+            e.preventDefault();
+            if (e.dataTransfer?.getData("text/plain") != null && e.dataTransfer.getData("text/plain") != "" && this.tile == null) {
+                this.tile = JSON.parse(e.dataTransfer.getData("text/plain"));
+                console.log(this.tile?.lettre);
+                this.textContent = this.tile!.lettre;
+                if (this.tile!= null && this.x != -1) {
+                    jeu.plateau.grille[x][y] = this.tile;
+                }
+            }
+
+            this.style.backgroundColor = "";
+        }
+
+        this.ondragend = (e)=>{
+            this.tile = null;
+            this.textContent = ""
+        }
+
+        this.ondragenter = (e)=>{
+            this.style.backgroundColor = "blue";
+        }
+
+        this.ondragleave = (e) => {
+            this.style.backgroundColor = "";
+        }
+
+        this.ondragover = (e) => {
+            e.preventDefault();
+            if (e.dataTransfer) {
+                e.dataTransfer.dropEffect = "move";
+            }
+        };
+
 
     }
 
