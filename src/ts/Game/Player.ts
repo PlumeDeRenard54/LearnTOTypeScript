@@ -6,7 +6,7 @@ import {TileFactory} from "./TileFactory.js";
  */
 export class Player{
     //Nombre max de tuiles que l'utilisateur peut avoir dans son deck
-    private static decksize : number = 8;
+    private static decksize : number = 9;
 
     name : string
     deck : Array<Tile>

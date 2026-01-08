@@ -46,7 +46,9 @@ export function gamePage(){
 
     //Nom de l'utilisateur
     let nom : HTMLLabelElement = document.createElement("label")
-    nom.textContent = jeu.joueur.name;
+    if (ClientSock.opponent) {
+        nom.textContent = jeu.joueur.name + " / " + ClientSock.opponent;
+    }
 
     //Grille
     let grille = document.createElement("div");
@@ -67,7 +69,7 @@ export function gamePage(){
     //Deck
     let deck = document.createElement("div");
     deck.className = "deck"
-    deck.style.gridTemplateColumns = "repeat("+jeu.joueur.deck.length +",1fr)";
+    deck.style.gridTemplateColumns = "repeat(1,1fr)";
     for ( let tile of jeu.joueur.deck){
         let vue : VueTile = new VueTile(tile,-1,-1,jeu);
         deck.appendChild(vue)
@@ -89,8 +91,13 @@ export function gamePage(){
     }
     deck.appendChild(validation);
 
+    let divElement = document.createElement("div");
+    divElement.className = "centerPart";
+
 
     document.body.appendChild(nom)
-    document.body.appendChild(grille);
-    document.body.appendChild(deck)
+
+    document.body.appendChild(divElement);
+    divElement.appendChild(grille);
+    divElement.appendChild(deck);
 }

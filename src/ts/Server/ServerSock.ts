@@ -11,6 +11,7 @@ interface ServerToClientEvents {
     permissionDeJeu : () => void;
     sendWelcomeText : (message : string) => void;
     launchGame : (opponent : string, plateau : Plateau) => void;
+    updatePlateau : (map : Plateau) => void;
 
 }
 
@@ -69,6 +70,8 @@ export class ServerSock {
     //Games supportées par le server
     private jeux : Array<game>
 
+    private currentRoom = 0;
+    private currentRoomFill = 2
 
     private constructor() {
         this.jeux = new Array<game>()
@@ -88,18 +91,19 @@ export class ServerSock {
         this.io.on("connection", (socket) => {
 
             //Recuperer un namespace libre
-            let i : number = 0;
-            let nameSpace: Namespace;
-            do {
-                let roomName : string = "/room"+i;
-                if (!this.io._nsps.has(roomName)){
-                    this.setUpRoom(this.io.of(roomName),i)
-                    console.log("Ouverture de la room : " + roomName);
-                }
-                nameSpace = this.io.of(roomName)
-            }while (nameSpace.sockets.size > 1 )
 
-            socket.emit("askToConnect",nameSpace.name)
+            let name = "/room";
+
+            if (this.currentRoomFill < 2){
+                this.currentRoomFill++;
+            }else{
+                this.currentRoomFill = 1;
+                this.currentRoom++;
+                this.setUpRoom(this.io.of(name+this.currentRoom),this.currentRoom)
+                console.log("Ouverture de la room : " + name+this.currentRoom);
+            }
+
+            socket.emit("askToConnect","/room"+this.currentRoom);
         });
 
         this.server.listen(8080, () => {
@@ -145,7 +149,7 @@ export class ServerSock {
                 }
             });
 
-            nameSpace.on("Play",(plateau : Plateau , scoreCoup : number)=>{
+            socket.on("Play",(plateau : Plateau , scoreCoup : number)=>{
                 console.log(this.jeux[index].currentPlayer?.nom + " a joué!")
                 let jeu = this.jeux[index];
                 jeu.plateau = plateau;
@@ -156,9 +160,11 @@ export class ServerSock {
                 }else {
                     jeu.currentPlayer = jeu.j1
                 }
-                // @ts-ignore
-                jeu.currentPlayer.socket.emit("permissionDeJeu")
+                jeu.currentPlayer?.socket.emit("updatePlateau",jeu.plateau);
+                jeu.currentPlayer?.socket.emit("permissionDeJeu")
             });
+
+            //TODO Gerer la deconnexion
         })
 
     }

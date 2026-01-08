@@ -12,6 +12,7 @@ interface ServerToClientEvents {
     permissionDeJeu : () => void;
     sendWelcomeText : (message : string) => void;
     launchGame : (opponent : string, plateau : Plateau) => void;
+    updatePlateau : (map : Plateau) => void;
 }
 
 //Fonction Client -> Server
@@ -25,6 +26,8 @@ export class ClientSock {
 
     //Instance du client
     private static instance : ClientSock
+
+    public static opponent : string;
 
     //Socket reliant le client au server
     private socket : Socket<ServerToClientEvents, ClientToServerEvents>;
@@ -43,6 +46,7 @@ export class ClientSock {
             this.socket.on("launchGame",(opponent : string, plateau : Plateau)=>{
                 console.log("Lancement du jeu")
                 console.log("Your opponent is " + opponent);
+                ClientSock.opponent = opponent;
                 ClientSock.jeu.plateau = plateau;
                 ClientSock.jeu.joueur.fillDeck();
                 gamePage();
@@ -50,6 +54,7 @@ export class ClientSock {
 
             this.socket.on("permissionDeJeu",() => {
                 console.log("Reception de la permission de jeu")
+                ClientSock.jeu.joueur.add2Deck(2);
                 ClientSock.jeu.joueur.isAllowed = true;
                 gamePage();
             });
@@ -59,6 +64,10 @@ export class ClientSock {
             })
 
             this.socket.emit("setName",ClientSock.jeu.joueur.name);
+
+            this.socket.on("updatePlateau",(map : Plateau) =>  {
+                ClientSock.jeu.plateau = map;
+            })
         });
     }
 
@@ -83,6 +92,8 @@ export class ClientSock {
         }
 
     }
+
+    //TODO Gestion Deconnection
 
 
 }

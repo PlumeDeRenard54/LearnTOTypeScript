@@ -4,7 +4,7 @@ import { TileFactory } from "./TileFactory.js";
  */
 export class Player {
     //Nombre max de tuiles que l'utilisateur peut avoir dans son deck
-    static decksize = 8;
+    static decksize = 9;
     name;
     deck;
     isAllowed;

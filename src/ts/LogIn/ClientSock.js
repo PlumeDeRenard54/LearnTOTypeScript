@@ -5,6 +5,7 @@ import { gamePage } from "../MainCode.js";
 export class ClientSock {
     //Instance du client
     static instance;
+    static opponent;
     //Socket reliant le client au server
     socket;
     //Jeu géré par le client
@@ -17,12 +18,14 @@ export class ClientSock {
             this.socket.on("launchGame", (opponent, plateau) => {
                 console.log("Lancement du jeu");
                 console.log("Your opponent is " + opponent);
+                ClientSock.opponent = opponent;
                 ClientSock.jeu.plateau = plateau;
                 ClientSock.jeu.joueur.fillDeck();
                 gamePage();
             });
             this.socket.on("permissionDeJeu", () => {
                 console.log("Reception de la permission de jeu");
+                ClientSock.jeu.joueur.add2Deck(2);
                 ClientSock.jeu.joueur.isAllowed = true;
                 gamePage();
             });
@@ -30,6 +33,9 @@ export class ClientSock {
                 console.log(message);
             });
             this.socket.emit("setName", ClientSock.jeu.joueur.name);
+            this.socket.on("updatePlateau", (map) => {
+                ClientSock.jeu.plateau = map;
+            });
         });
     }
     static getInstance() {

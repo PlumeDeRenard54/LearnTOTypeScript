@@ -13,6 +13,8 @@ export class ServerSock {
     server;
     //Games supportées par le server
     jeux;
+    currentRoom = 0;
+    currentRoomFill = 2;
     constructor() {
         this.jeux = new Array();
         this.server = createServer();
@@ -23,17 +25,17 @@ export class ServerSock {
         });
         this.io.on("connection", (socket) => {
             //Recuperer un namespace libre
-            let i = 0;
-            let nameSpace;
-            do {
-                let roomName = "/room" + i;
-                if (!this.io._nsps.has(roomName)) {
-                    this.setUpRoom(this.io.of(roomName), i);
-                    console.log("Ouverture de la room : " + roomName);
-                }
-                nameSpace = this.io.of(roomName);
-            } while (nameSpace.sockets.size > 1);
-            socket.emit("askToConnect", nameSpace.name);
+            let name = "/room";
+            if (this.currentRoomFill < 2) {
+                this.currentRoomFill++;
+            }
+            else {
+                this.currentRoomFill = 1;
+                this.currentRoom++;
+                this.setUpRoom(this.io.of(name + this.currentRoom), this.currentRoom);
+                console.log("Ouverture de la room : " + name + this.currentRoom);
+            }
+            socket.emit("askToConnect", "/room" + this.currentRoom);
         });
         this.server.listen(8080, () => {
             console.log("Server is running on http://localhost:8080");
@@ -69,7 +71,7 @@ export class ServerSock {
                     jeu.currentPlayer.socket.emit("permissionDeJeu");
                 }
             });
-            nameSpace.on("Play", (plateau, scoreCoup) => {
+            socket.on("Play", (plateau, scoreCoup) => {
                 console.log(this.jeux[index].currentPlayer?.nom + " a joué!");
                 let jeu = this.jeux[index];
                 jeu.plateau = plateau;
@@ -81,9 +83,10 @@ export class ServerSock {
                 else {
                     jeu.currentPlayer = jeu.j1;
                 }
-                // @ts-ignore
-                jeu.currentPlayer.socket.emit("permissionDeJeu");
+                jeu.currentPlayer?.socket.emit("updatePlateau", jeu.plateau);
+                jeu.currentPlayer?.socket.emit("permissionDeJeu");
             });
+            //TODO Gerer la deconnexion
         });
     }
     static getInstance() {

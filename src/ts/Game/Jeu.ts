@@ -28,12 +28,13 @@ export class Jeu {
 
     //Checke si le jeu est valide et renvoie le score de l'action
     public validerJeu():number{
-        if (this.checkHorizontal() && this.checkVertical()){
+        if (this.checkHorizontal() && this.checkVertical() && this.checkLonelyTiles()){
             let score : number = this.calulerScore()
             console.log("score du coup : " + score);
             this.joueur.isAllowed = false;
             return score;
         }else{
+            console.log("Coup non Valide")
             return -1;
         }
     }
@@ -56,7 +57,7 @@ export class Jeu {
     //Verifie que les mots verticaux sont valides
     public checkVertical(): boolean{
         let inMot = false;
-        let grille : Array<Array<Tile>> = this.plateau.grille;
+        let grille : Array<Array<Tile|null>> = this.plateau.grille;
         let mots : Array<string> = new Array<string>();
         let nbMot : number = -1;
 
@@ -76,8 +77,8 @@ export class Jeu {
             }
         }
         for (let mot of mots) {
-            console.log("verif vertical" + mots);
-            if (mot.length > 1 && !this.dico.contains(mot)) {
+            if (mot.length > 1 && !this.dico.contains(mot.toLowerCase())) {
+                console.log("CheckVertical negatif")
                 return false;
             }
         }
@@ -87,7 +88,7 @@ export class Jeu {
     //Check si les mots horizontaux sont valides
     public checkHorizontal() : boolean{
         let inMot : boolean = false;
-        let grille : Array<Array<Tile>> = this.plateau.grille;
+        let grille : Array<Array<Tile|null>> = this.plateau.grille;
         let mots : Array<string> = new Array<string>();
         let nbMot : number = -1;
 
@@ -99,22 +100,58 @@ export class Jeu {
                         mots[nbMot] = "";
                         inMot = true;
                     }
+                    // @ts-ignore
                     mots[nbMot] += grille[j][i].lettre;
                 }else{
                     inMot = false;
                 }
             }
             inMot = false;
-            console.log("verif horizontal " + mots);
         }
         for (let mot of mots) {
-            if (mot.length > 1 && !this.dico.contains(mot)) {
+            if (mot.length > 1 && !this.dico.contains(mot.toLowerCase())) {
+                console.log("Check Horizontal negatif")
                 return false;
             }
         }
         return true;
     }
 
+    public checkLonelyTiles() : boolean {
+        let grille  = this.plateau.grille;
+        for ( let i = 0 ; i< grille.length ; i++){
+            for (let  j = 0 ; j<grille[0].length ; j++){
+                if (grille[i][j]!=null && this.isLonely(i,j)){
+                    console.log("Check alone negatif")
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    //Checke si la case est lonely
+    private isLonely(x : number,y : number){
+        let grille = this.plateau.grille;
+        for ( let i = x-1 ; i< x+2 ; i++){
+            try {
+                if (i != x && grille[i][y] != null) {
+                    return false
+                }
+            }catch (e) {}
+        }
+
+        for (let  j = y-1 ; j<y+2 ; j++){
+            try {
+                if (j != y && grille[x][j] != null) {
+                    return false
+                }
+            }catch (e){}
+        }
+
+        return true;
+    }
 
 
 }

@@ -6,7 +6,7 @@ export class VueTile extends HTMLElement{
     x : number;
     y : number;
 
-    public constructor(tilet :Tile,x : number,y: number,jeu : Jeu) {
+    public constructor(tilet :Tile|null,x : number,y: number,jeu : Jeu) {
         super();
         this.x = x;
         this.y = y;
@@ -32,7 +32,6 @@ export class VueTile extends HTMLElement{
             e.preventDefault();
             if (e.dataTransfer?.getData("text/plain") != null && e.dataTransfer.getData("text/plain") != "" && this.tile == null) {
                 this.tile = JSON.parse(e.dataTransfer.getData("text/plain"));
-                console.log(this.tile?.lettre);
                 this.textContent = this.tile!.lettre;
                 if (this.tile!= null && this.x != -1) {
                     jeu.plateau.grille[x][y] = this.tile;
@@ -43,6 +42,9 @@ export class VueTile extends HTMLElement{
         }
 
         this.ondragend = (e)=>{
+            if (this.tile!=null && this.x != -1){
+                jeu.plateau.grille[x][y] = null;
+            }
             this.tile = null;
             this.textContent = ""
         }
