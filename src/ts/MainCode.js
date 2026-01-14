@@ -37,6 +37,9 @@ export function gamePage() {
     if (ClientSock.opponent) {
         nom.textContent = jeu.joueur.name + " / " + ClientSock.opponent;
     }
+    else {
+        nom.textContent = "Waiting for an opponent";
+    }
     //Grille
     let grille = document.createElement("div");
     grille.className = "grille";

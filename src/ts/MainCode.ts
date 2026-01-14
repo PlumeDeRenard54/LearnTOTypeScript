@@ -48,6 +48,8 @@ export function gamePage(){
     let nom : HTMLLabelElement = document.createElement("label")
     if (ClientSock.opponent) {
         nom.textContent = jeu.joueur.name + " / " + ClientSock.opponent;
+    }else{
+        nom.textContent = "Waiting for an opponent";
     }
 
     //Grille
