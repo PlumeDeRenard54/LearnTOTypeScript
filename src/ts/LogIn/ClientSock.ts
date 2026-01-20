@@ -37,7 +37,7 @@ export class ClientSock {
 
     private constructor() {
 
-        this.socket = io("http://localhost:8080");
+        this.socket = io("http://prawn:8080");
 
         this.socket.on("askToConnect",(room : string)=>{
             console.log("Connexion à la room " + room);
