@@ -1,7 +1,8 @@
 {
   "type": "module",
   "devDependencies": {
-    "@types/node": "^25.0.3"
+    "@types/node": "^25.0.3",
+    "@types/ws": "^8.18.1"
   },
   "dependencies": {
     "socket.io": "^4.8.3",

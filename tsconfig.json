@@ -5,6 +5,8 @@
     "moduleResolution": "node", /* Helps find socket.io and other packages */
     "lib": ["ESNext", "DOM"],   /* Allows use of 'document' and 'window' */
     "sourceMap": true,          /* Highly recommended for debugging in the browser */
-    "strict": true
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
   }
 }
