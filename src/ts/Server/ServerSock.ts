@@ -108,8 +108,8 @@ export class ServerSock {
             socket.emit("askToConnect","/room"+this.currentRoom);
         });
 
-        this.server.listen(8080, () => {
-            console.log("Server is running on http://localhost:8080");
+        this.server.listen(80, () => {
+            console.log("Server is running on http://localhost:80");
         });
     }
 
