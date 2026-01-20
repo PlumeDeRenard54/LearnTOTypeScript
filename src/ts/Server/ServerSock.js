@@ -86,7 +86,16 @@ export class ServerSock {
                 jeu.currentPlayer?.socket.emit("updatePlateau", jeu.plateau);
                 jeu.currentPlayer?.socket.emit("permissionDeJeu");
             });
-            //TODO Gerer la deconnexion
+            socket.on("Disconnect", () => {
+                console.log("Deconnection de " + socket.data.name);
+                if (this.jeux[index].j1?.nom == socket.data.name) {
+                    this.jeux[index].j2?.socket.emit("interruptionPartie");
+                }
+                else {
+                    this.jeux[index].j1?.socket.emit("interruptionPartie");
+                }
+                socket.disconnect();
+            });
         });
     }
     static getInstance() {

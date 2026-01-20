@@ -13,21 +13,23 @@ interface ServerToClientEvents {
     sendWelcomeText : (message : string) => void;
     launchGame : (opponent : string, plateau : Plateau) => void;
     updatePlateau : (map : Plateau) => void;
+    interruptionPartie : ()=>void;
 }
 
 //Fonction Client -> Server
 interface ClientToServerEvents {
     setName: (name:string) => void;
     Play : (plateau : Plateau, scoreCoup : number) => void;
+    Disconnect : () => void ;
 }
 
 //Partie client du server
 export class ClientSock {
 
     //Instance du client
-    private static instance : ClientSock
+    private static instance : null | ClientSock
 
-    public static opponent : string;
+    public static opponent : null | string;
 
     //Socket reliant le client au server
     private socket : Socket<ServerToClientEvents, ClientToServerEvents>;
@@ -68,6 +70,12 @@ export class ClientSock {
             this.socket.on("updatePlateau",(map : Plateau) =>  {
                 ClientSock.jeu.plateau = map;
             })
+
+            this.socket.on("interruptionPartie",()=>{
+                ClientSock.instance = null;
+                ClientSock.opponent = null;
+                gamePage();
+            })
         });
     }
 
@@ -93,7 +101,8 @@ export class ClientSock {
 
     }
 
-    //TODO Gestion Deconnection
-
+    public disconnect():void{
+        this.socket.emit("Disconnect");
+    }
 
 }

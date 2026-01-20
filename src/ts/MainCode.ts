@@ -32,6 +32,10 @@ function logInPage(){
         jeu = new Jeu(nameInput.value);
         ClientSock.setJeu(jeu)
         client = ClientSock.getInstance();
+        window.addEventListener('beforeunload',()=>{
+            console.log("Fermeture")
+            ClientSock.getInstance().disconnect();
+        });
         gamePage();
 
     }
@@ -41,6 +45,7 @@ function logInPage(){
 }
 
 export function gamePage(){
+    client = ClientSock.getInstance();
     //Clear du body
     document.body.innerHTML = "";
 

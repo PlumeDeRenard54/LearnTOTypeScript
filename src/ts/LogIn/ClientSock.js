@@ -36,6 +36,11 @@ export class ClientSock {
             this.socket.on("updatePlateau", (map) => {
                 ClientSock.jeu.plateau = map;
             });
+            this.socket.on("interruptionPartie", () => {
+                ClientSock.instance = null;
+                ClientSock.opponent = null;
+                gamePage();
+            });
         });
     }
     static getInstance() {
@@ -54,6 +59,9 @@ export class ClientSock {
             this.socket.emit("Play", ClientSock.jeu.plateau, play);
             gamePage();
         }
+    }
+    disconnect() {
+        this.socket.emit("Disconnect");
     }
 }
 //# sourceMappingURL=ClientSock.js.map

@@ -12,6 +12,7 @@ interface ServerToClientEvents {
     sendWelcomeText : (message : string) => void;
     launchGame : (opponent : string, plateau : Plateau) => void;
     updatePlateau : (map : Plateau) => void;
+    interruptionPartie : ()=>void;
 
 }
 
@@ -21,6 +22,7 @@ interface ServerToClientEvents {
 interface ClientToServerEvents {
     setName: (name:string) => void;
     Play : (plateau : Plateau, scoreCoup : number) => void;
+    Disconnect : () => void ;
 }
 
 /**
@@ -164,7 +166,16 @@ export class ServerSock {
                 jeu.currentPlayer?.socket.emit("permissionDeJeu")
             });
 
-            //TODO Gerer la deconnexion
+            socket.on("Disconnect", ()=>{
+                console.log("Deconnection de " + socket.data.name);
+                if (this.jeux[index].j1?.nom == socket.data.name ){
+                    this.jeux[index].j2?.socket.emit("interruptionPartie");
+                }else{
+                    this.jeux[index].j1?.socket.emit("interruptionPartie");
+                }
+
+                socket.disconnect();
+            });
         })
 
     }
