@@ -39,7 +39,7 @@ export class ClientSock {
 
     private constructor() {
 
-        this.socket = io("https://prawnsuit.hopto.org/:5469");
+        this.socket = io("https://prawnsuit.hopto.org:5469/");
 
         this.socket.on("askToConnect",(room : string)=>{
             console.log("Connexion à la room " + room);

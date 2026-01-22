@@ -11,7 +11,7 @@ export class ClientSock {
     //Jeu géré par le client
     static jeu;
     constructor() {
-        this.socket = io("https://prawnsuit.hopto.org/:5469");
+        this.socket = io("https://prawnsuit.hopto.org:5469/");
         this.socket.on("askToConnect", (room) => {
             console.log("Connexion à la room " + room);
             this.socket.disconnect();
