@@ -11,11 +11,11 @@ export class ClientSock {
     //Jeu géré par le client
     static jeu;
     constructor() {
-        this.socket = io("http://prawnsuit.hopto.org/:5469");
+        this.socket = io("https://prawnsuit.hopto.org/:5469");
         this.socket.on("askToConnect", (room) => {
             console.log("Connexion à la room " + room);
             this.socket.disconnect();
-            this.socket = io("http://prawnsuit.hopto.org:5469" + room);
+            this.socket = io("https://prawnsuit.hopto.org:5469" + room);
             this.socket.on("launchGame", (opponent, plateau) => {
                 console.log("Lancement du jeu");
                 console.log("Your opponent is " + opponent);
