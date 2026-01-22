@@ -38,7 +38,7 @@ export class ServerSock {
             socket.emit("askToConnect", "/room" + this.currentRoom);
         });
         this.server.listen(5469, () => {
-            console.log("Server is running on http://localhost:5469");
+            console.log("Server is running on https://localhost:5469");
         });
     }
     //Setting up des rooms de jeu
