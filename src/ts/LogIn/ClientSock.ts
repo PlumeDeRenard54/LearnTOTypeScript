@@ -39,12 +39,12 @@ export class ClientSock {
 
     private constructor() {
 
-        this.socket = io("prawnsuit.hopto.org/:5469");
+        this.socket = io("https://prawnsuit.hopto.org/:5469");
 
         this.socket.on("askToConnect",(room : string)=>{
             console.log("Connexion à la room " + room);
             this.socket.disconnect();
-            this.socket = io("prawnsuit.hopto.org:5469"+room);
+            this.socket = io("https://prawnsuit.hopto.org:5469"+room);
 
             this.socket.on("launchGame",(opponent : string, plateau : Plateau)=>{
                 console.log("Lancement du jeu")
