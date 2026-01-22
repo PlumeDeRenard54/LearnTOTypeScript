@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
-import { createServer } from "node:http";
+import { createServer } from "node:https";
 import { Plateau } from "../Game/Plateau.js";
+import { readFileSync } from "node:fs";
 /**
  * Classe server
  */
@@ -17,7 +18,10 @@ export class ServerSock {
     currentRoomFill = 2;
     constructor() {
         this.jeux = new Array();
-        this.server = createServer();
+        this.server = createServer({
+            key: readFileSync('/etc/letsencrypt/live/prawnsuit.hopto.org/privkey.pem'),
+            cert: readFileSync('/etc/letsencrypt/live/prawnsuit.hopto.org/fullchain.pem')
+        });
         this.io = new Server(this.server, {
             cors: {
                 origin: "*" // In production, replace with your actual frontend URL
