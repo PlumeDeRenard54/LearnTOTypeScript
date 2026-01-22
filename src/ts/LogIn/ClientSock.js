@@ -14,6 +14,7 @@ export class ClientSock {
         this.socket = io("prawnsuit.hopto.org/:5469");
         this.socket.on("askToConnect", (room) => {
             console.log("Connexion à la room " + room);
+            this.socket.disconnect();
             this.socket = io("prawnsuit.hopto.org:5469" + room);
             this.socket.on("launchGame", (opponent, plateau) => {
                 console.log("Lancement du jeu");
